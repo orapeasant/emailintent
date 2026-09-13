@@ -1,0 +1,156 @@
+{
+  "version": 2,
+  "generated_at": "2026-09-12T10:17:38.080334+00:00",
+  "domain_hint": "general personal/consumer email: transactional receipts and account notices, security/account alerts, newsletters and marketing (split by product/service type), job alerts and professional networking, event/webinar invitations, personal correspondence, and local/community content — no specific business domain should be assumed; let the intents reflect whatever is actually in the sample.",
+  "source_file": "/home/ubuntu/gf/email/dataset/historical_extract.jsonl",
+  "sample_size": 150,
+  "intents": [
+    {
+      "id": "retail_shopping_promo",
+      "label": "Retail & Shopping Promotions",
+      "description": "Marketing emails from retail/e-commerce brands (clothing, home goods, electronics, grocery) advertising sales, discounts, or new arrivals.",
+      "example_subjects": [
+        "Save Up to 40% During Our Labor Day Sale",
+        "ALL dresses are 50% off",
+        "Extra 30% off gear for hiking, fishing, & more."
+      ]
+    },
+    {
+      "id": "travel_hospitality_promo",
+      "label": "Travel & Hospitality Promotions",
+      "description": "Marketing emails promoting cruises, hotels, car rentals, or vacation deals.",
+      "example_subjects": [
+        "This is it! Last chance to get vacations from $299",
+        "Haiyong: Check out your latest account summary",
+        "The clock is ticking on up to $750 in savings"
+      ]
+    },
+    {
+      "id": "financial_services_promo",
+      "label": "Financial Services Marketing",
+      "description": "Promotional or informational emails from banks, investment firms, or financial newsletters offering products, insights, or credit line news.",
+      "example_subjects": [
+        "Good news — your credit line has been increased",
+        "Don't miss this chance to get a $500 bonus offer",
+        "Semi-retirement: Work less, live more"
+      ]
+    },
+    {
+      "id": "saas_tech_newsletter",
+      "label": "SaaS/Tech Product Newsletter",
+      "description": "Newsletters or promotional content from software, AI, or tech companies about products, features, or industry content.",
+      "example_subjects": [
+        "One console. Every agent. Every laptop.",
+        "Save 40% on Microsoft programs with Coursera Plus",
+        "Causal AI, SafeChat, DRAM Bypass, JEP 540..."
+      ]
+    },
+    {
+      "id": "news_media_newsletter",
+      "label": "News & Media Digest",
+      "description": "Daily or periodic news roundups and briefings from media outlets covering finance, world events, or general news.",
+      "example_subjects": [
+        "Nepal flood deaths rise",
+        "早间市场快报：美股小幅下跌",
+        "Waiting on Warsh"
+      ]
+    },
+    {
+      "id": "real_estate_listing_alert",
+      "label": "Real Estate Listings & Alerts",
+      "description": "Automated property listing notifications, open house invites, and saved home updates from real estate platforms.",
+      "example_subjects": [
+        "Open House: 30 Lake Avenue #207, Saratoga Springs, NY",
+        "New listing in Clifton Park at $475K",
+        "Sold Home: 42 Westchester Drive"
+      ]
+    },
+    {
+      "id": "job_alert_networking",
+      "label": "Job Alerts & Professional Networking",
+      "description": "Automated job postings, LinkedIn notifications, and networking/career platform messages.",
+      "example_subjects": [
+        "Senior Software Engineer - Agentic AI at NVIDIA",
+        "Oracle EBS Lead at Americhem",
+        "GlobalFoundries teammates have a Zip invite waiting"
+      ]
+    },
+    {
+      "id": "event_webinar_invite",
+      "label": "Event & Webinar Invitations",
+      "description": "Invitations, reminders, or follow-ups for meetups, conferences, webinars, or professional courses/programs.",
+      "example_subjects": [
+        "Data & AI and App Development Meetup: Amazon Bedrock Session",
+        "Build your Frontier Transformation Week agenda",
+        "Last chance to apply | MIT Professional Education: TLP"
+      ]
+    },
+    {
+      "id": "security_account_alert",
+      "label": "Security & Account Alerts",
+      "description": "Notifications about sign-ins, password/verification requests, account changes, or domain/service expirations.",
+      "example_subjects": [
+        "Security alert",
+        "Your confirmation code",
+        "Reminder: Your Domain(s) Will Expire Shortly"
+      ]
+    },
+    {
+      "id": "transactional_receipt",
+      "label": "Transactional Receipts & Purchase Notices",
+      "description": "Order confirmations, purchase/debit card usage alerts, statements, and review requests tied to a specific transaction.",
+      "example_subjects": [
+        "Your debit card was used",
+        "Maybank Securities FX Daily Statement",
+        "Give us the scoop on your recent purchase."
+      ]
+    },
+    {
+      "id": "community_local_content",
+      "label": "Local & Community Content",
+      "description": "Neighborhood social platform posts, community group updates, and local organization events (e.g., Nextdoor, school district).",
+      "example_subjects": [
+        "I was walking on the sidewalk and a woman made...",
+        "2026 CCC Summer BBQ!",
+        "2026–27 School Year Transportation Update"
+      ]
+    },
+    {
+      "id": "personal_correspondence",
+      "label": "Personal Correspondence",
+      "description": "Direct personal emails or forwarded messages between individuals, not automated or marketing content.",
+      "example_subjects": [
+        "Fwd: GF Photonics"
+      ]
+    },
+    {
+      "id": "general_newsletter_content",
+      "label": "General Interest Newsletter",
+      "description": "Blog-style or content newsletters on lifestyle, self-help, hobbies, or general interest topics not tied to a specific product/service.",
+      "example_subjects": [
+        "What Anxiety Is Trying to Tell You",
+        "Can You Fly With Plants?",
+        "Need distractions? Try these on us."
+      ]
+    },
+    {
+      "id": "productivity_calendar_notification",
+      "label": "Productivity & App Notifications",
+      "description": "Automated notifications from productivity tools, calendars, or community/social apps about activity or reminders.",
+      "example_subjects": [
+        "You have no events scheduled today.",
+        "caydengineer mentioned you in Mentra Community",
+        "\"Dynamic.html dashboard\""
+      ]
+    },
+    {
+      "id": "other",
+      "label": "Other/Uncategorized",
+      "description": "Emails that do not clearly fit any other category, including ambiguous, spam-like, or unclassifiable content.",
+      "example_subjects": [
+        "RICHES ARE IN NICHES",
+        "From $100/month to $10K/month"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,50 @@
+{
+  "base_model": "answerdotai/ModernBERT-base",
+  "num_labels": 15,
+  "id2label": {
+    "0": "retail_shopping_promo",
+    "1": "travel_hospitality_promo",
+    "2": "financial_services_promo",
+    "3": "saas_tech_newsletter",
+    "4": "news_media_newsletter",
+    "5": "real_estate_listing_alert",
+    "6": "job_alert_networking",
+    "7": "event_webinar_invite",
+    "8": "security_account_alert",
+    "9": "transactional_receipt",
+    "10": "community_local_content",
+    "11": "personal_correspondence",
+    "12": "general_newsletter_content",
+    "13": "productivity_calendar_notification",
+    "14": "other"
+  },
+  "train_size": 3599,
+  "val_size": 450,
+  "test_size": 450,
+  "max_seq_length": 500,
+  "epochs": 4,
+  "batch_size": 8,
+  "learning_rate": 2e-05,
+  "val_metrics": {
+    "eval_loss": 0.25246357917785645,
+    "eval_accuracy": 0.94,
+    "eval_f1_macro": 0.9078943094838424,
+    "eval_precision_macro": 0.9139449719645973,
+    "eval_recall_macro": 0.910132985953373,
+    "eval_runtime": 6.3779,
+    "eval_samples_per_second": 70.556,
+    "eval_steps_per_second": 4.547,
+    "epoch": 4.0
+  },
+  "test_metrics": {
+    "test_loss": 0.6029466390609741,
+    "test_accuracy": 0.8911111111111111,
+    "test_f1_macro": 0.843403670735769,
+    "test_precision_macro": 0.8785531698059341,
+    "test_recall_macro": 0.8234844720496896,
+    "test_runtime": 5.9202,
+    "test_samples_per_second": 76.011,
+    "test_steps_per_second": 4.898,
+    "epoch": 4.0
+  }
+}
