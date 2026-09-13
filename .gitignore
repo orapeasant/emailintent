@@ -1,0 +1,57 @@
+# ─── Secrets & credentials ────────────────────────────────────────────────
+# Mailbox passwords, API keys. Never commit these.
+.env
+.env.*
+*.secret
+credentials.json
+token.json
+
+# ─── Email data (PRIVACY: contains real mailbox content) ──────────────────
+# These hold full message bodies, sender addresses and subjects. They must
+# never reach a remote. Keep the directory itself so the layout is obvious.
+dataset/*.jsonl
+dataset/*.csv
+dataset/*.parquet
+dataset/*.db
+dataset/*.sqlite*
+!dataset/.gitkeep
+
+# ─── Trained models & checkpoints (~4 GB) ─────────────────────────────────
+# Regenerate with train_modernbert.py. The training report is small and
+# worth versioning as a record of what each run achieved.
+# Note: git cannot re-include a file inside an excluded *directory*, so the
+# run directories are re-admitted before the report is un-ignored.
+models/**
+!models/*/
+!models/**/training_report.json
+
+# ─── Virtualenvs, caches, build junk ──────────────────────────────────────
+.venv/
+venv/
+env/
+.pip_tmp/
+.hf_cache/
+__pycache__/
+*.py[cod]
+*$py.class
+.ipynb_checkpoints/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+*.egg-info/
+build/
+dist/
+
+# ─── Generated deck artifacts ─────────────────────────────────────────────
+# docs/deck_html/ is a throwaway intermediate from the adxppt converter.
+# The .pptx and the bundled single-file .html ARE committed on purpose —
+# they get shared with people who will not run the build scripts.
+docs/deck_html/
+
+# ─── Editors & OS ─────────────────────────────────────────────────────────
+.vscode/
+.idea/
+*.swp
+*~
+.DS_Store
+Thumbs.db
