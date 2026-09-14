@@ -17,6 +17,23 @@ from pptx.enum.shapes import MSO_SHAPE
 
 W, H = 13.333, 7.5
 
+#: Legibility uplift. The deck is read on a projector and on laptops, where
+#: 10–11pt body text is too small. Sizes are mapped centrally here rather than
+#: edited at ~90 call sites, so the visual hierarchy stays consistent.
+#: Anchors requested: 11 -> 16 and 10.5 -> 14.
+FONT_SCALE = {
+    6: 7, 7: 8,          # blank spacer lines
+    9.5: 13, 10: 13.5, 10.5: 14,
+    11: 16, 11.5: 16, 12: 16.5, 12.5: 17, 13: 17.5,
+    14: 18, 15: 19, 16: 20,
+    20: 22, 21: 23, 25: 26, 26: 30, 38: 40,
+}
+
+
+def fs(size):
+    return FONT_SCALE.get(size, size)
+
+
 NAVY   = RGBColor(0x0B, 0x24, 0x47)
 BLUE   = RGBColor(0x19, 0x37, 0x6D)
 ACCENT = RGBColor(0x57, 0x6C, 0xBC)
@@ -75,7 +92,7 @@ def write(shape, lines, anchor=MSO_ANCHOR.MIDDLE, margin=0.06):
         p.alignment = align
         r = p.add_run()
         r.text = text
-        r.font.size = Pt(size)
+        r.font.size = Pt(fs(size))
         r.font.bold = bold
         r.font.color.rgb = color
     return shape
@@ -104,7 +121,7 @@ def header(slide, title, kicker=None, sub=None):
                 [(sub, 13, False, GREY, PP_ALIGN.LEFT)])
 
 
-def pagenum(slide, n, total=9):
+def pagenum(slide, n, total=12):
     textbox(slide, W - 1.15, H - 0.42, 0.7, 0.28,
             [(f"{n} / {total}", 10, False, GREY, PP_ALIGN.RIGHT)])
     # The title placeholder is created first and would be painted over by the
@@ -168,16 +185,15 @@ rect(s, 0, 0, 0.28, H, fill=ACCENT)
 rect(s, 7.9, 0, 5.43, H, fill=BLUE)
 
 ph = s.shapes.title
-ph.left, ph.top, ph.width, ph.height = Inches(0.95), Inches(2.05), Inches(6.7), Inches(1.5)
+ph.left, ph.top, ph.width, ph.height = Inches(0.95), Inches(1.82), Inches(6.8), Inches(2.0)
 write(ph, [("Email Intent Classification", 38, True, WHITE, PP_ALIGN.LEFT),
            ("Build our own model, or rent an LLM API?", 21, False, SKY, PP_ALIGN.LEFT)],
       anchor=MSO_ANCHOR.MIDDLE, margin=0.0)
 
 textbox(s, 0.95, 1.45, 6.7, 0.35,
         [("DECISION BRIEFING", 12, True, ACCENT, PP_ALIGN.LEFT)])
-textbox(s, 0.95, 3.75, 6.7, 0.9,
-        [("Automating triage of ~10,000 procurement emails per month", 14, False, WHITE, PP_ALIGN.LEFT),
-         ("across shared supplier inboxes.", 14, False, WHITE, PP_ALIGN.LEFT)])
+textbox(s, 0.95, 4.05, 6.7, 1.0,
+        [("Automating triage of ~10,000 procurement emails per month across shared supplier inboxes.", 14, False, WHITE, PP_ALIGN.LEFT)])
 textbox(s, 0.95, 6.55, 6.7, 0.3,
         [("Prepared by Data & ML Engineering  ·  September 2026", 11, False, GREY, PP_ALIGN.LEFT)])
 
@@ -223,7 +239,7 @@ s = blank()
 header(s, "Four ways to do this", "THE OPTIONS",
        "All four were evaluated. The real choice is between C and D — a model we own, or a service we rent.")
 
-grid(s, 0.55, 1.85, [2.5, 4.0, 1.9, 2.0, 1.85],
+grid(s, 0.55, 1.85, [2.9, 3.55, 1.9, 2.0, 1.85],
      [["Approach", "What it is", "Accuracy", "Cost / month", "Data leaves us?"],
       ["A. Keyword / TF-IDF", "Hand-written rules and word counts", "Low", "~$0", "No"],
       ["B. Embeddings + head", "Frozen embeddings, small classifier", "Medium", "Low", "No"],
@@ -234,29 +250,21 @@ grid(s, 0.55, 1.85, [2.5, 4.0, 1.9, 2.0, 1.85],
                   **{(4, c): AMBERL for c in range(5)}},
      bolds={(3, 0): True, (4, 0): True, (1, 0): True, (2, 0): True})
 
-rect(s, 0.55, 4.62, 6.05, 2.25, fill=GREENL)
-rect(s, 0.55, 4.62, 0.06, 2.25, fill=GREEN)
-textbox(s, 0.8, 4.78, 5.6, 2.0,
+rect(s, 0.55, 4.68, 6.05, 2.2, fill=GREENL)
+rect(s, 0.55, 4.68, 0.06, 2.2, fill=GREEN)
+textbox(s, 0.8, 4.82, 5.6, 1.92,
         [("C — Our own model  ✓ recommended", 14, True, GREEN, PP_ALIGN.LEFT),
          ("", 6, False, DARK, PP_ALIGN.LEFT),
-         ("A compact 150M-parameter model, fine-tuned on our own", 11, False, DARK, PP_ALIGN.LEFT),
-         ("emails and our own intent taxonomy.", 11, False, DARK, PP_ALIGN.LEFT),
-         ("", 6, False, DARK, PP_ALIGN.LEFT),
-         ("Runs inside our network. Costs the same whether we", 11, False, DARK, PP_ALIGN.LEFT),
-         ("classify 10,000 or 1,000,000 emails. Version-frozen,", 11, False, DARK, PP_ALIGN.LEFT),
-         ("so an audit can reproduce any decision we made.", 11, False, DARK, PP_ALIGN.LEFT)])
+         ("A compact 150M-parameter model, fine-tuned on our own emails and our own intent taxonomy.", 11, False, DARK, PP_ALIGN.LEFT),
+         ("Runs in our network. Version-frozen, so any past decision can be reproduced for an audit.", 11, False, DARK, PP_ALIGN.LEFT)])
 
-rect(s, 6.98, 4.62, 5.8, 2.25, fill=AMBERL)
-rect(s, 6.98, 4.62, 0.06, 2.25, fill=AMBER)
-textbox(s, 7.23, 4.78, 5.35, 2.0,
+rect(s, 6.98, 4.68, 5.8, 2.2, fill=AMBERL)
+rect(s, 6.98, 4.68, 0.06, 2.2, fill=AMBER)
+textbox(s, 7.23, 4.82, 5.35, 1.92,
         [("D — Paid LLM API", 14, True, AMBER, PP_ALIGN.LEFT),
          ("", 6, False, DARK, PP_ALIGN.LEFT),
-         ("Fastest to a first result, and genuinely strong at", 11, False, DARK, PP_ALIGN.LEFT),
-         ("understanding language it has never seen.", 11, False, DARK, PP_ALIGN.LEFT),
-         ("", 6, False, DARK, PP_ALIGN.LEFT),
-         ("But every email — including supplier bank details —", 11, False, DARK, PP_ALIGN.LEFT),
-         ("leaves our network, on every single call, forever.", 11, False, DARK, PP_ALIGN.LEFT),
-         ("The vendor can change the model underneath us.", 11, False, DARK, PP_ALIGN.LEFT)])
+         ("Fastest to a first result, and strong at language it has never seen.", 11, False, DARK, PP_ALIGN.LEFT),
+         ("But every email — including bank details — leaves our network on every call, forever.", 11, False, DARK, PP_ALIGN.LEFT)])
 pagenum(s, 3)
 
 # ─────────────────────────────────────────────────────────── 4. Comparison
@@ -266,12 +274,12 @@ header(s, "Own model vs. paid LLM API", "HEAD TO HEAD",
 
 grid(s, 0.55, 1.8, [3.15, 4.55, 4.55],
      [["Dimension", "Our own fine-tuned model", "Paid LLM API"],
-      ["Accuracy on our taxonomy", "89% measured — learns our 20 intents", "Strong generally; must be re-told our intents every call"],
+      ["Accuracy on our taxonomy", "89% measured on our 20 intents", "Must be re-told our intents every call"],
       ["Latency per email", "~15 milliseconds", "2–5 seconds (100–300× slower)"],
       ["Marginal cost per email", "~$0 once built", "$0.006 – $0.05 (measured)"],
-      ["Sensitive data residency", "Never leaves our network", "Bank details and pricing sent to a third party"],
-      ["Reproducibility / audit", "Version frozen — any decision replayable", "Vendor updates the model without notice"],
-      ["Availability", "No rate limits, no external outage", "Rate limits; dependent on vendor uptime"],
+      ["Sensitive data residency", "Never leaves our network", "Bank details sent to a third party"],
+      ["Reproducibility / audit", "Version frozen, replayable", "Vendor updates without notice"],
+      ["Availability", "No rate limits, no outage risk", "Rate limits; vendor uptime"],
       ["Vendor lock-in", "None — the asset is ours", "High — pricing and terms can change"],
       ["Time to first result", "6–8 weeks", "Days"]],
      row_h=0.47,
@@ -279,9 +287,9 @@ grid(s, 0.55, 1.8, [3.15, 4.55, 4.55],
                   (5, 1): GREENL, (6, 1): GREENL, (7, 1): GREENL, (8, 2): GREENL},
      bolds={(r, 0): True for r in range(1, 9)})
 
-rect(s, 0.55, 6.28, 12.23, 0.72, fill=NAVY)
-textbox(s, 0.85, 6.42, 11.7, 0.5,
-        [("The LLM API wins on exactly one dimension — how fast we can start. We can have that too, by using it as the teacher (slide 7).",
+rect(s, 0.55, 6.18, 12.23, 0.85, fill=NAVY)
+textbox(s, 0.85, 6.28, 11.7, 0.68,
+        [("The LLM API wins on exactly one dimension — time to first result. We can have that too, by using it as the teacher (slide 7).",
           12.5, True, WHITE, PP_ALIGN.LEFT)])
 pagenum(s, 4)
 
@@ -316,17 +324,16 @@ grid(s, 6.98, 2.08, [2.9, 1.45, 1.45],
      bolds={(4, 0): True, (5, 0): True, (4, 1): True, (5, 2): True,
             (1, 0): True, (2, 0): True, (3, 0): True})
 
-textbox(s, 0.55, 4.95, 12.2, 0.28,
+textbox(s, 0.55, 4.92, 12.2, 0.28,
         [("Green marks the cheaper option in each row. Engineering estimated at one fully-loaded engineer for 6–8 weeks.",
           9.5, False, GREY, PP_ALIGN.LEFT)])
 
-rect(s, 0.55, 5.38, 12.23, 1.5, fill=AMBERL)
-rect(s, 0.55, 5.38, 0.06, 1.5, fill=AMBER)
-textbox(s, 0.85, 5.52, 11.7, 1.3,
+rect(s, 0.55, 5.25, 12.23, 1.72, fill=AMBERL)
+rect(s, 0.55, 5.25, 0.06, 1.72, fill=AMBER)
+textbox(s, 0.85, 5.36, 11.7, 1.55,
         [("Stated plainly: at today's volume, building our own model is the more expensive option.", 13, True, AMBER, PP_ALIGN.LEFT),
-         ("Break-even sits at roughly $10–12k / year of API spend — about ten times our current volume, or any scenario using full", 11.5, False, DARK, PP_ALIGN.LEFT),
-         ("thread context with self-consistency checks. Below that line, the API is cheaper and we should not pretend otherwise.", 11.5, False, DARK, PP_ALIGN.LEFT),
-         ("We are recommending the build for control, auditability and data residency — not to save money in year one.", 11.5, True, NAVY, PP_ALIGN.LEFT)])
+         ("Break-even is about $10–12k / year of API spend — roughly ten times our current volume, or any full-thread scenario with self-consistency checks.", 11.5, False, DARK, PP_ALIGN.LEFT),
+         ("We recommend building for control, auditability and data residency — not to save money in year one.", 11.5, True, NAVY, PP_ALIGN.LEFT)])
 pagenum(s, 5)
 
 # ─────────────────────────────────────────────────────────── 6. Evidence
@@ -348,21 +355,21 @@ for i, (x, big, cap) in enumerate([
     textbox(s, x + 0.1, 2.62, w - 0.2, 0.6,
             [(line, 10, False, GREY, PP_ALIGN.CENTER) for line in cap.split("\n")])
 
-textbox(s, 0.55, 3.52, 12.2, 0.3,
+textbox(s, 0.55, 3.45, 12.2, 0.3,
         [("How it was done", 13, True, NAVY, PP_ALIGN.LEFT)])
-grid(s, 0.55, 3.88, [0.62, 4.3, 7.31],
+grid(s, 0.55, 3.8, [0.62, 4.3, 7.31],
      [["#", "Step", "Result"],
-      ["1", "Extract history from the mailbox", "4,499 emails, cleaned of HTML, quotes and footers"],
-      ["2", "Discover the intent taxonomy", "15 intents generated from the real corpus, not guessed"],
-      ["3", "Label the corpus with an LLM (one-time)", "100% labelled; only 5.4% needed human attention"],
-      ["4", "Fine-tune our own model", "ModernBERT-base, on a single laptop GPU, in minutes"],
-      ["5", "Measure on held-out data", "89.1% accuracy / 84.3% macro-F1 on unseen emails"]],
-     row_h=0.44, bolds={(r, 0): True for r in range(1, 6)})
+      ["1", "Extract history from the mailbox", "4,499 emails, cleaned of HTML and quotes"],
+      ["2", "Discover the intent taxonomy", "15 intents from the real corpus, not guessed"],
+      ["3", "Label the corpus with an LLM", "100% labelled; only 5.4% needed attention"],
+      ["4", "Fine-tune our own model", "ModernBERT-base, one laptop GPU, minutes"],
+      ["5", "Measure on held-out data", "89.1% accuracy / 84.3% macro-F1, unseen mail"]],
+     row_h=0.42, bolds={(r, 0): True for r in range(1, 6)})
 
-rect(s, 0.55, 6.6, 12.23, 0.55, fill=GREENL)
-rect(s, 0.55, 6.6, 0.06, 0.55, fill=GREEN)
-textbox(s, 0.85, 6.69, 11.7, 0.4,
-        [("The hardware was a laptop GPU. The procurement version needs better data and business review — not better technology.",
+rect(s, 0.55, 6.42, 12.23, 0.6, fill=GREENL)
+rect(s, 0.55, 6.42, 0.06, 0.6, fill=GREEN)
+textbox(s, 0.85, 6.52, 11.7, 0.42,
+        [("Hardware was a laptop GPU — what we need is better data and review, not better technology.",
           12, True, GREEN, PP_ALIGN.LEFT)])
 pagenum(s, 6)
 
@@ -376,7 +383,7 @@ for x, w, title, sub, fill, color in [
         (0.85, 2.55, "Paid LLM", "Labels our corpus\nONE TIME  ·  ~$500", AMBERL, AMBER),
         (4.05, 2.55, "Labelled corpus", "Our data, our intents\nOwned by us", BGL2, BLUE),
         (7.25, 2.55, "Our own model", "Fine-tuned ModernBERT\nTrained on our corpus", GREENL, GREEN),
-        (10.45, 2.05, "Runtime", "Classifies every email\n~$0 per email", GREENL, GREEN)]:
+        (10.45, 2.05, "Runtime", "Classifies all mail\n~$0 per email", GREENL, GREEN)]:
     rect(s, x, 2.12, w, 1.35, fill=fill)
     rect(s, x, 2.12, w, 0.055, fill=color)
     textbox(s, x + 0.12, 2.32, w - 0.24, 0.35,
@@ -396,57 +403,186 @@ bullet_card(s, 4.72, 4.38, 3.95, 1.5, "We keep the asset",
 bullet_card(s, 8.89, 4.38, 3.89, 1.5, "We stop paying",
             ["The teacher is paid once.", "The runtime costs us nothing."], accent=GREEN, fill=GREENL)
 
-rect(s, 0.55, 6.1, 12.23, 0.88, fill=NAVY)
-textbox(s, 0.85, 6.23, 11.7, 0.65,
+rect(s, 0.55, 6.0, 12.23, 1.0, fill=NAVY)
+textbox(s, 0.85, 6.1, 11.7, 0.85,
         [("Renting an LLM per email means paying forever for a capability we never own, while our most sensitive data leaves the network on every call.",
           12, False, WHITE, PP_ALIGN.LEFT),
-         ("Paying once to train our own model turns that same spend into an asset on our balance sheet.",
+         ("Paying once to train our own model turns that same spend into an asset we keep.",
           12, True, SKY, PP_ALIGN.LEFT)])
 pagenum(s, 7)
 
-# ─────────────────────────────────────────────────────────── 8. Risks
+# ─────────────────────────────────────────────────────────── 8. End-to-end process
+s = blank()
+header(s, "How it works, end to end", "THE PIPELINE",
+       "Ten steps from mailbox to routed intent. Steps 1–5 build the model once; steps 6–10 run continuously.")
+
+
+def pipeline_row(slide, y, label, label_color, box_fill, steps):
+    textbox(slide, 0.55, y, 8.0, 0.28,
+            [(label, 11.5, True, label_color, PP_ALIGN.LEFT)])
+    bx = 0.55
+    for i, (num, title, sub) in enumerate(steps):
+        rect(slide, bx, y + 0.34, 2.15, 1.3, fill=box_fill)
+        rect(slide, bx, y + 0.34, 2.15, 0.055, fill=label_color)
+        textbox(slide, bx + 0.07, y + 0.48, 2.01, 0.26,
+                [(f"{num}. {title}", 11.5, True, NAVY, PP_ALIGN.CENTER)])
+        textbox(slide, bx + 0.07, y + 0.79, 2.01, 0.75,
+                [(ln, 9.5, False, GREY, PP_ALIGN.CENTER) for ln in sub.split("\n")])
+        if i < len(steps) - 1:
+            textbox(slide, bx + 2.17, y + 0.84, 0.32, 0.34,
+                    [("→", 16, True, label_color, PP_ALIGN.CENTER)])
+        bx += 2.51
+
+
+pipeline_row(s, 1.78, "BUILD ONCE  —  6 to 8 weeks", ACCENT, BGL, [
+    ("1", "Retrieve", "Graph API delta sync\nfrom shared mailboxes"),
+    ("2", "Clean", "Strip HTML, quotes,\nsignatures, footers"),
+    ("3", "Label", "LLM assigns intent\n+ confidence, one time"),
+    ("4", "Review", "Business corrects the\nuncertain and sampled"),
+    ("5", "Train", "Fine-tune ModernBERT\non our own corpus"),
+])
+
+pipeline_row(s, 3.66, "RUN CONTINUOUSLY  —  every day thereafter", GREEN, GREENL, [
+    ("6", "Evaluate", "Gold set decides\nwhether it ships"),
+    ("7", "Deploy", "Versioned model,\nfrozen for audit"),
+    ("8", "Classify", "New mail scored\nin ~15 milliseconds"),
+    ("9", "Route", "Confident cases auto,\nrest to a person"),
+    ("10", "Improve", "Corrections feed\nweekly retraining"),
+])
+
+rect(s, 0.55, 5.42, 12.23, 1.6, fill=BGL)
+rect(s, 0.55, 5.42, 0.06, 1.6, fill=ACCENT)
+textbox(s, 0.85, 5.52, 11.7, 1.45,
+        [("Two things hold this together", 12.5, True, NAVY, PP_ALIGN.LEFT),
+         ("Step 2 uses identical cleaning code in training and production. Divergence there is the most common silent killer of accuracy.", 11, False, DARK, PP_ALIGN.LEFT),
+         ("Step 3 is the only point where email content leaves our network — once, and never again after training.", 11, True, GREEN, PP_ALIGN.LEFT)])
+pagenum(s, 8)
+
+# ─────────────────────────────────────────────────────────── 9. Graph API access
+s = blank()
+header(s, "What access we need — Microsoft Graph", "THE ACCESS REQUEST",
+       "Read-only, scoped to the named procurement mailboxes, granted to a service identity rather than to a person.")
+
+textbox(s, 0.55, 1.8, 5.9, 0.3,
+        [("What we are asking for", 12.5, True, GREEN, PP_ALIGN.LEFT)])
+grid(s, 0.55, 2.14, [2.6, 3.3],
+     [["Permission / control", "What it allows"],
+      ["Mail.Read  (application)", "Read message bodies"],
+      ["Application Access Policy", "Limited to named mailboxes"],
+      ["Certificate credential", "No shared passwords"],
+      ["Delta query", "Incremental sync only"]],
+     row_h=0.44, head_h=0.44, body_size=10, head_fill=GREEN,
+     bolds={(r, 0): True for r in range(1, 5)})
+
+textbox(s, 6.9, 1.8, 5.88, 0.3,
+        [("What we are deliberately not asking for", 12.5, True, RED, PP_ALIGN.LEFT)])
+grid(s, 6.9, 2.14, [2.6, 3.28],
+     [["Permission", "Why we do not want it"],
+      ["Mail.Send", "We never send email"],
+      ["Mail.ReadWrite", "We never edit or delete"],
+      ["Unscoped Mail.Read", "Would expose every mailbox"],
+      ["Directory / User.Read.All", "Not needed at all"]],
+     row_h=0.44, head_h=0.44, body_size=10, head_fill=RED,
+     bolds={(r, 0): True for r in range(1, 5)})
+
+textbox(s, 0.55, 4.46, 8.0, 0.3,
+        [("One-time setup, by IT", 12.5, True, NAVY, PP_ALIGN.LEFT)])
+bx = 0.55
+for i, (title, sub) in enumerate([
+        ("Register app", "Entra ID app\nregistration"),
+        ("Admin consent", "Tenant admin\ngrants Mail.Read"),
+        ("Scope it", "Scoped to named\nmailboxes"),
+        ("Certificate", "Cert in Key Vault,\nrotated"),
+        ("Verify", "No other mailbox\nis reachable")]):
+    rect(s, bx, 4.78, 2.15, 1.05, fill=BGL2)
+    textbox(s, bx + 0.07, 4.89, 2.01, 0.28,
+            [(title, 11, True, NAVY, PP_ALIGN.CENTER)])
+    textbox(s, bx + 0.07, 5.2, 2.01, 0.58,
+            [(ln, 9.5, False, GREY, PP_ALIGN.CENTER) for ln in sub.split("\n")])
+    if i < 4:
+        textbox(s, bx + 2.17, 5.18, 0.32, 0.3, [("→", 15, True, ACCENT, PP_ALIGN.CENTER)])
+    bx += 2.51
+
+rect(s, 0.55, 5.95, 12.23, 0.85, fill=GREENL)
+rect(s, 0.55, 5.95, 0.06, 0.85, fill=GREEN)
+textbox(s, 0.85, 6.05, 11.7, 0.7,
+        [("One application, read-only, with an Exchange policy that makes every other mailbox in the tenant unreachable — not merely off-limits by convention. Revoking it is a single switch in Entra ID.",
+          11.5, False, DARK, PP_ALIGN.LEFT)])
+pagenum(s, 9)
+
+# ─────────────────────────────────────────────────────────── 10. Access control safety
+s = blank()
+header(s, "Access control and safety", "PROTECTING THE SHARED MAILBOXES",
+       "Personal login is right for a prototype and wrong for a running system.")
+
+grid(s, 0.55, 1.82, [3.1, 4.5, 4.63],
+     [["", "Personal login (today)", "Service principal (recommended)"],
+      ["Identity", "A named employee", "Purpose-built, non-human"],
+      ["Graph permission", "Mail.Read.Shared", "Mail.Read + access policy"],
+      ["Reach", "Any mailbox they can open", "Only the named mailboxes"],
+      ["Audit trail", "Attributed to a person", "Attributed to the service"],
+      ["If they change role or leave", "Pipeline breaks, access follows them", "Unaffected"],
+      ["MFA / password rotation", "Interrupts the automation", "Certificate, rotated on schedule"],
+      ["Revoking access", "Disable an employee's account", "Disable one app registration"]],
+     row_h=0.43, head_h=0.44, body_size=10,
+     cell_colors={(r, 2): GREENL for r in range(1, 8)},
+     bolds={(r, 0): True for r in range(1, 8)})
+
+bullet_card(s, 0.55, 5.4, 2.93, 0.95, "Read-only",
+            ["No send, no edit"], accent=GREEN, fill=GREENL, tsize=12, bsize=10)
+bullet_card(s, 3.65, 5.4, 2.93, 0.95, "Scoped",
+            ["Named mailboxes only"], accent=GREEN, fill=GREENL, tsize=12, bsize=10)
+bullet_card(s, 6.75, 5.4, 2.93, 0.95, "Audited",
+            ["Purview logs all reads"], accent=GREEN, fill=GREENL, tsize=12, bsize=10)
+bullet_card(s, 9.85, 5.4, 2.93, 0.95, "Minimised",
+            ["Only fields we need"], accent=GREEN, fill=GREENL, tsize=12, bsize=10)
+
+rect(s, 0.55, 6.42, 12.23, 0.68, fill=AMBERL)
+rect(s, 0.55, 6.42, 0.06, 0.68, fill=AMBER)
+textbox(s, 0.85, 6.5, 11.7, 0.56,
+        [("The one-time labelling step does send email content to an external LLM — it needs its own approval, and it is exactly what owning the model ends.",
+          11, False, DARK, PP_ALIGN.LEFT)])
+pagenum(s, 10)
+
+# ─────────────────────────────────────────────────────────── 11. Risks
 s = blank()
 header(s, "What could go wrong, and how we handle it", "RISKS — STATED UP FRONT",
        "These are real. All are manageable, and all are cheaper to address than an unbounded API dependency.")
 
 grid(s, 0.55, 1.85, [3.5, 4.6, 4.13],
      [["Risk", "Why it matters", "How we handle it"],
-      ["Needs labelled data", "A model is only as good as its examples", "LLM labels the bulk; people check the uncertain 5%"],
-      ["Labels may be noisy", "Bad labels quietly cap accuracy", "600-email human gold set measures the truth"],
-      ["Taxonomy may not be learnable", "Business categories can overlap in text", "Validated against real mail before we spend"],
-      ["Language drifts over time", "New suppliers, new systems, new wording", "Weekly retraining, with a quality gate"],
-      ["ML skills needed in-house", "We must be able to maintain it", "Standard open tooling; pipeline already built"],
-      ["Multi-topic emails", "One email can carry two requests", "Detected and escalated to a person"]],
-     row_h=0.53,
+      ["Needs labelled data", "A model is only as good as its examples", "LLM labels bulk; people check the 5%"],
+      ["Labels may be noisy", "Bad labels quietly cap accuracy", "600-email human gold set"],
+      ["Taxonomy may not be learnable", "Business categories overlap in text", "Validated on real mail first"],
+      ["Language drifts over time", "New suppliers, systems, wording", "Weekly retraining with a gate"],
+      ["ML skills needed in-house", "We must be able to maintain it", "Open tooling; pipeline built"],
+      ["Multi-topic emails", "One email can carry two requests", "Detected and escalated"]],
+     row_h=0.5,
      cell_colors={(r, 2): GREENL for r in range(1, 7)},
      bolds={(r, 0): True for r in range(1, 7)})
 
-rect(s, 0.55, 5.5, 6.05, 1.45, fill=REDL)
-rect(s, 0.55, 5.5, 0.06, 1.45, fill=RED)
-textbox(s, 0.8, 5.65, 5.6, 1.2,
+rect(s, 0.55, 5.38, 6.05, 1.55, fill=REDL)
+rect(s, 0.55, 5.38, 0.06, 1.55, fill=RED)
+textbox(s, 0.8, 5.5, 5.6, 1.31,
         [("The risk of doing nothing", 13, True, RED, PP_ALIGN.LEFT),
-         ("Triage stays people-limited. Volume grows,", 11, False, DARK, PP_ALIGN.LEFT),
-         ("headcount has to grow with it, and nothing", 11, False, DARK, PP_ALIGN.LEFT),
-         ("downstream can be automated.", 11, False, DARK, PP_ALIGN.LEFT)])
+         ("Triage stays people-limited. Volume grows, headcount grows with it, and nothing downstream can be automated.", 11, False, DARK, PP_ALIGN.LEFT)])
 
-rect(s, 6.98, 5.5, 5.8, 1.45, fill=AMBERL)
-rect(s, 6.98, 5.5, 0.06, 1.45, fill=AMBER)
-textbox(s, 7.23, 5.65, 5.35, 1.2,
+rect(s, 6.98, 5.38, 5.8, 1.55, fill=AMBERL)
+rect(s, 6.98, 5.38, 0.06, 1.55, fill=AMBER)
+textbox(s, 7.23, 5.5, 5.35, 1.31,
         [("The risk of renting instead", 13, True, AMBER, PP_ALIGN.LEFT),
-         ("Sensitive supplier data leaves our network on", 11, False, DARK, PP_ALIGN.LEFT),
-         ("every call. Costs rise with every new inbox.", 11, False, DARK, PP_ALIGN.LEFT),
-         ("We own nothing at the end of it.", 11, False, DARK, PP_ALIGN.LEFT)])
-pagenum(s, 8)
+         ("Sensitive supplier data leaves our network on every call. Costs rise with every new inbox, and we own nothing at the end.", 11, False, DARK, PP_ALIGN.LEFT)])
+pagenum(s, 11)
 
-# ─────────────────────────────────────────────────────────── 9. Ask
+# ─────────────────────────────────────────────────────────── 12. Ask
 s = blank()
 header(s, "The decision, and what we need", "THE ASK",
        "One decision today; the rest is already specified and partly built.")
 
 rect(s, 0.55, 1.8, 12.23, 0.95, fill=GREEN)
-textbox(s, 0.85, 1.95, 11.7, 0.7,
-        [("Approve building our own email intent model, with a paid LLM used once as a teacher.", 16, True, WHITE, PP_ALIGN.LEFT),
-         ("Not approving means committing to a permanent per-email fee and sending supplier data outside our network.", 11.5, False, SKY, PP_ALIGN.LEFT)])
+textbox(s, 0.85, 1.95, 11.7, 0.75,
+        [("Approve building our own model, with a paid LLM used once as a teacher.", 16, True, WHITE, PP_ALIGN.LEFT),
+         ("Not approving means a permanent per-email fee and supplier data leaving our network.", 11.5, False, SKY, PP_ALIGN.LEFT)])
 
 textbox(s, 0.55, 3.0, 5.9, 0.3, [("What we need from the business", 13, True, NAVY, PP_ALIGN.LEFT)])
 grid(s, 0.55, 3.36, [3.4, 2.5],
@@ -468,15 +604,13 @@ grid(s, 6.9, 3.36, [3.4, 2.48],
      cell_colors={(r, 1): GREENL for r in range(1, 5)},
      bolds={(r, 0): True for r in range(1, 5)})
 
-rect(s, 0.55, 5.85, 12.23, 1.1, fill=BGL)
-rect(s, 0.55, 5.85, 0.06, 1.1, fill=ACCENT)
-textbox(s, 0.85, 5.98, 11.7, 0.9,
-        [("At the end of eight weeks we will own a measured, auditable classification model that runs inside our network at effectively zero",
-          12, False, DARK, PP_ALIGN.LEFT),
-         ("cost per email — and a benchmark showing exactly how it compares to the paid alternative. If it loses, we will say so.",
+rect(s, 0.55, 5.8, 12.23, 1.1, fill=BGL)
+rect(s, 0.55, 5.8, 0.06, 1.1, fill=ACCENT)
+textbox(s, 0.85, 5.9, 11.7, 0.95,
+        [("In eight weeks we will own a measured, auditable model running inside our network at effectively zero cost per email — plus a benchmark against the paid alternative. If it loses, we will say so.",
           12, False, DARK, PP_ALIGN.LEFT),
          ("Detailed technical specification is already written and ready for review.", 11, True, NAVY, PP_ALIGN.LEFT)])
-pagenum(s, 9)
+pagenum(s, 12)
 
 prs.save("docs/email_intent_briefing.pptx")
 print(f"saved: {len(prs.slides.__iter__.__self__._sldIdLst)} slides")
